@@ -45,7 +45,7 @@ public class LoginScreen extends javax.swing.JFrame {
 		TaiKhoanDao taiKhoanDao = (TaiKhoanDao) Naming.lookup(URL + "taiKhoanDao");
 		VeDao veDao = (VeDao) Naming.lookup(URL + "veDao");
 		this.allDao = new AllDao(chiTietVeDao, choNgoiDao, chuyenDao, gaDao, hoaDonDao, khachHangDao, khuyenMaiDao,
-				nhanVienDao, taiKhoanDao, tauDao, tuyenDao, veDao);
+				nhanVienDao, taiKhoanDao, tauDao, tuyenDao, veDao, toaDao);
 		txtusername.setBackground(new java.awt.Color(0, 0, 0, 1));
 		txtpassword.setBackground(new java.awt.Color(0, 0, 0, 1));
 		txtusername.setText("21030001");

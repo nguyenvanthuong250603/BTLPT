@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManagerFactory;
 import model.AllDao;
 
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 import entity.TaiKhoan;
 
@@ -13,7 +14,7 @@ public class GD_MuaVe extends javax.swing.JPanel {
 
 	private AllDao allDao;
 	private TaiKhoan taiKhoan;
-    public GD_MuaVe(AllDao allDao, TaiKhoan taiKhoan) {
+    public GD_MuaVe(AllDao allDao, TaiKhoan taiKhoan) throws RemoteException {
     	this.allDao = allDao;
     	this.taiKhoan = taiKhoan;
         initComponents();
