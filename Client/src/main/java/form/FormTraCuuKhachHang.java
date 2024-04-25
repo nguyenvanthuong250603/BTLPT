@@ -8,6 +8,7 @@ import model.AllDao;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -21,10 +22,10 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class FormTraCuuKhachHang extends javax.swing.JPanel {
-    private AllDao allDao;
 
-    public FormTraCuuKhachHang(EntityManagerFactory emf) {
-        this.emf = emf;
+	private AllDao allDao;
+    public FormTraCuuKhachHang(AllDao allDao) throws RemoteException {
+      this.allDao = allDao;
         initComponents();
         formThongTin.setBorder(new EmptyBorder(0, 0, 0, 0));
         formThongTin.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE), "Thông tin khách hàng", 0, HEIGHT, new Font(Font.SANS_SERIF,Font.BOLD,20) {
@@ -35,8 +36,8 @@ public class FormTraCuuKhachHang extends javax.swing.JPanel {
         table.getTableHeader().setFont(new Font("SansSerif", Font.PLAIN, 14));
         table.getTableHeader().setPreferredSize(new Dimension(30,30));
         ((DefaultTableCellRenderer)table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-        khachHangDao = new KhachHangDao(emf);
-		List<KhachHang> list = khachHangDao.getAllKhachHang();
+      
+		List<KhachHang> list =allDao.getKhachHangDao().getAllKhachHang();
 		addDataTable(list);
   }
         private void addDataTable(List<KhachHang> list) {
@@ -53,11 +54,11 @@ public class FormTraCuuKhachHang extends javax.swing.JPanel {
 //    private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {
 //		
 //	}
-    private void xoaTrang() {
+    private void xoaTrang() throws RemoteException {
 		jtMaKH.setText("");
 		jtTenKH.setText("");
 		table.clearSelection();
-		List<KhachHang> list = khachHangDao.getAllKhachHang();
+		List<KhachHang> list = allDao.getKhachHangDao().getAllKhachHang();
 		addDataTable(list);
 	}
 
@@ -132,7 +133,12 @@ public class FormTraCuuKhachHang extends javax.swing.JPanel {
         btnXoaTrang.setPreferredSize(new java.awt.Dimension(103, 55));
         btnXoaTrang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnXoaTrangActionPerformed(evt);
+                try {
+					btnXoaTrangActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -144,7 +150,12 @@ public class FormTraCuuKhachHang extends javax.swing.JPanel {
         btnTraCuu.setPreferredSize(new java.awt.Dimension(103, 55));
         btnTraCuu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTraCuuActionPerformed(evt);
+                try {
+					btnTraCuuActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -212,17 +223,17 @@ public class FormTraCuuKhachHang extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jtTenKHActionPerformed
 
-    private void btnXoaTrangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaTrangActionPerformed
+    private void btnXoaTrangActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_btnXoaTrangActionPerformed
         xoaTrang();
     }//GEN-LAST:event_btnXoaTrangActionPerformed
 
-    private void btnTraCuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTraCuuActionPerformed
+    private void btnTraCuuActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_btnTraCuuActionPerformed
         // TODO add your handling code here:
         String tieuChi = "";
 		if (!jtMaKH.getText().trim().equalsIgnoreCase("")) {
 			tieuChi = jtMaKH.getText();
 			List<KhachHang> list = new ArrayList<KhachHang>();
-			KhachHang khachHang = khachHangDao.getKhachHangByCCCD(tieuChi);
+			KhachHang khachHang = allDao.getKhachHangDao().getKhachHangByCCCD(tieuChi);
 			list.add(khachHang);
 			addDataTable(list);
 		} else if (tieuChi.isEmpty()){

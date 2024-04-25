@@ -11,6 +11,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+
 import net.miginfocom.swing.MigLayout;
 
 public class MenuItem extends javax.swing.JPanel {
@@ -62,7 +64,12 @@ public class MenuItem extends javax.swing.JPanel {
                         open = !open;
                     }
                 }
-                eventSelected.menuSelected(index, -1);
+                try {
+					eventSelected.menuSelected(index, -1);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
             
         });
@@ -74,7 +81,12 @@ public class MenuItem extends javax.swing.JPanel {
             item.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
-                    eventSelected.menuSelected(index, item.getIndex());
+                    try {
+						eventSelected.menuSelected(index, item.getIndex());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                 }
             });
             add(item);
