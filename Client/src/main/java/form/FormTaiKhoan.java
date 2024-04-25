@@ -4,6 +4,8 @@ package form;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.HeadlessException;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -17,15 +19,14 @@ import dao.TaiKhoanDao;
 import entity.NhanVien;
 import entity.TaiKhoan;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 public class FormTaiKhoan extends javax.swing.JPanel {
-	private EntityManagerFactory emf;
-	private TaiKhoanDao taiKhoanDao;
-	private NhanVienDao nhanVienDao;
-	private NhanVien nhanVien;
 
-	public FormTaiKhoan(EntityManagerFactory emf, NhanVien nhanVien) {
-		this.emf = emf;
+	private NhanVien nhanVien;
+	private AllDao allDao;
+	public FormTaiKhoan(AllDao allDao, NhanVien nhanVien) throws RemoteException {
+		
 		this.nhanVien = nhanVien;
 		initComponents();
 		fNhap.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),
@@ -40,8 +41,7 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 		table.getTableHeader().setFont(new Font("SansSerif", Font.PLAIN, 16));
 		table.getTableHeader().setPreferredSize(new Dimension(30, 30));
 		((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-		taiKhoanDao = new TaiKhoanDao(emf);
-		nhanVienDao = new NhanVienDao(emf);
+	
 		if (nhanVien != null) {
 			jtMa.setText(nhanVien.getMaNhanVien());
 			jtTen.setText(nhanVien.getHoTen());
@@ -198,7 +198,12 @@ public class FormTaiKhoan extends javax.swing.JPanel {
         btnTim.setPreferredSize(new java.awt.Dimension(82, 55));
         btnTim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTimActionPerformed(evt);
+                try {
+					btnTimActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -209,7 +214,12 @@ public class FormTaiKhoan extends javax.swing.JPanel {
         btnThem.setPreferredSize(new java.awt.Dimension(75, 30));
         btnThem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnThemActionPerformed(evt);
+                try {
+					btnThemActionPerformed(evt);
+				} catch (HeadlessException | RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -220,7 +230,12 @@ public class FormTaiKhoan extends javax.swing.JPanel {
         btnCapNhat.setPreferredSize(new java.awt.Dimension(86, 55));
         btnCapNhat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCapNhatActionPerformed(evt);
+                try {
+					btnCapNhatActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -238,7 +253,6 @@ public class FormTaiKhoan extends javax.swing.JPanel {
         table.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
             },
             new String [] {
                 "Mã nhân viên", "Tên nhân viên", "Tên tài khoản", "Mật khẩu"
@@ -255,7 +269,12 @@ public class FormTaiKhoan extends javax.swing.JPanel {
         table.setRowHeight(30);
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tableMouseClicked(evt);
+                try {
+					tableMouseClicked(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
         jScrollPane1.setViewportView(table);
@@ -310,14 +329,14 @@ public class FormTaiKhoan extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMouseClicked
+    private void tableMouseClicked(java.awt.event.MouseEvent evt) throws RemoteException {//GEN-FIRST:event_tableMouseClicked
     	selectRowTable();
     }//GEN-LAST:event_tableMouseClicked
 
-	private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCapNhatActionPerformed
+	private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnCapNhatActionPerformed
 		String userName = jbTK.getText();
 		String password = jtMK.getText();
-		TaiKhoan taiKhoan = taiKhoanDao.getTaiKhoanByUserName(userName);
+		TaiKhoan taiKhoan =allDao.getTaiKhoanDao().getTaiKhoanByUserName(userName);
 		if(taiKhoan == null) {
 			JOptionPane.showMessageDialog(btnCapNhat, "Không tìm thấy tài khoản muốn cập nhật", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -325,13 +344,13 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 		}
 		taiKhoan.setTenTaiKhoan(userName);
 		taiKhoan.setMatKhau(password);
-		taiKhoanDao.updateTaiKhoan(taiKhoan);
+		allDao.getTaiKhoanDao().updateTaiKhoan(taiKhoan);
 		updateTable(taiKhoan);
 		xoaTrang();
 		
 	}// GEN-LAST:event_btnCapNhatActionPerformed
 
-	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTimActionPerformed
+	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnTimActionPerformed
 		String ma = jtMa.getText();
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		for(int i = 0; i < table.getRowCount();i++) {
@@ -344,7 +363,7 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 		
 	}// GEN-LAST:event_btnTimActionPerformed
 
-	private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnThemActionPerformed
+	private void btnThemActionPerformed(java.awt.event.ActionEvent evt) throws HeadlessException, RemoteException {// GEN-FIRST:event_btnThemActionPerformed
 		String userName = jbTK.getText().trim();
 		String password = jtMK.getText();
 		TaiKhoan taiKhoan = new TaiKhoan(userName, password);
@@ -353,12 +372,12 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 			showMessageValue(check);
 			return;
 		}
-		if(taiKhoanDao.getTaiKhoanByUserName(userName) != null) {
+		if(allDao.getTaiKhoanDao().getTaiKhoanByUserName(userName) != null) {
 			JOptionPane.showMessageDialog(btnCapNhat, "Tên tài khoản đã tồn tại", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		nhanVien = nhanVienDao.getNhanVienByMa(jtMa.getText());
+		nhanVien =allDao.getNhanVienDao().getNhanVienByMa(jtMa.getText());
 		if(nhanVien == null) {
 			JOptionPane.showMessageDialog(btnCapNhat, "Nhân viên không tồn tại", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -366,7 +385,7 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 		}
 		
 		taiKhoan.setNhanVien(nhanVien);
-		taiKhoanDao.addTaiKhoan(taiKhoan);
+		allDao.getTaiKhoanDao().addTaiKhoan(taiKhoan);
 		addRowTable(taiKhoan);
 		xoaTrang();
 		
@@ -450,7 +469,7 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 		jtMK.setText("");
 	}
 	
-	private void selectRowTable() {
+	private void selectRowTable() throws RemoteException {
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		int index = table.getSelectedRow();
 		if(index < 0) {
@@ -464,13 +483,13 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 		jtTen.setFocusable(false);
 		jbTK.setText(model.getValueAt(index, 2).toString());
 		jtMK.setText(model.getValueAt(index, 3).toString());
-		NhanVien nhanVien = nhanVienDao.getNhanVienByMa(jtMa.getText());
+		NhanVien nhanVien = allDao.getNhanVienDao().getNhanVienByMa(jtMa.getText());
 		addDataArea(nhanVien);
 	}
 	
-	private void addDatatable() {
+	private void addDatatable() throws RemoteException {
 
-		List<TaiKhoan> list = taiKhoanDao.getAllTaiKhoan();
+		List<TaiKhoan> list =allDao.getTaiKhoanDao().getAllTaiKhoan();
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.setRowCount(0);
 		for (TaiKhoan taiKhoan : list) {

@@ -3,6 +3,7 @@ package form;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,17 +17,19 @@ import javax.swing.table.DefaultTableModel;
 import dao.KhuyenMaiDao;
 import entity.KhuyenMai;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class FormTraCuuKhuyenMai extends javax.swing.JPanel {
 
-    private EntityManagerFactory emf;
-    private KhuyenMaiDao khuyenMaiDao;
+  
+ 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-    public FormTraCuuKhuyenMai(EntityManagerFactory emf) {
-        this.emf = emf;
+    private AllDao allDao;
+    public FormTraCuuKhuyenMai(AllDao allDao) throws RemoteException {
+      
         initComponents();
         formThongTin.setBorder(new EmptyBorder(0, 0, 0, 0));
         formThongTin.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),
@@ -39,8 +42,8 @@ public class FormTraCuuKhuyenMai extends javax.swing.JPanel {
         tableTraCuuKM.getTableHeader().setPreferredSize(new Dimension(30, 30));
         ((DefaultTableCellRenderer) tableTraCuuKM.getTableHeader().getDefaultRenderer())
                 .setHorizontalAlignment(JLabel.CENTER);
-        khuyenMaiDao = new KhuyenMaiDao(emf);
-        List<KhuyenMai> list = khuyenMaiDao.getAllKhuyenMai();
+       
+        List<KhuyenMai> list = allDao.getKhuyenMaiDao().getAllKhuyenMai();
         addDataTable(list);
     }
 
@@ -184,7 +187,12 @@ public class FormTraCuuKhuyenMai extends javax.swing.JPanel {
         btnTraCuu.setPreferredSize(new java.awt.Dimension(103, 55));
         btnTraCuu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTraCuuActionPerformed(evt);
+                try {
+					btnTraCuuActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -288,11 +296,11 @@ public class FormTraCuuKhuyenMai extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnTraCuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTraCuuActionPerformed
+    private void btnTraCuuActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_btnTraCuuActionPerformed
         // TODO add your handling code here:
         String tieuChi = jtMaKM.getText().trim();
         if (!tieuChi.isEmpty()) {
-            KhuyenMai khuyenMai = khuyenMaiDao.getKhuyenMaiByMa(tieuChi);
+            KhuyenMai khuyenMai = allDao.getKhuyenMaiDao().getKhuyenMaiByMa(tieuChi);
             if (khuyenMai != null) {
                 List<KhuyenMai> list = new ArrayList<>();
                 list.add(khuyenMai);

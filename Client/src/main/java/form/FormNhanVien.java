@@ -3,6 +3,7 @@ package form;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -25,6 +26,7 @@ import dao.NhanVienDao;
 import entity.NhanVien;
 import entity.TaiKhoan;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 public class FormNhanVien extends javax.swing.JPanel {
 
@@ -33,12 +35,12 @@ public class FormNhanVien extends javax.swing.JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-	private EntityManagerFactory emf;
-	private NhanVienDao nhanVienDao;
-	private MainForm mainForm;
 
-	public FormNhanVien(EntityManagerFactory emf, MainForm mainForm) {
-		this.emf = emf;
+
+	private MainForm mainForm;
+	private AllDao allDao;
+	public FormNhanVien(AllDao allDao, MainForm mainForm) throws RemoteException {
+		this.allDao = allDao;
 		this.mainForm = mainForm;
 		initComponents();
 		formThongTin.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -52,8 +54,8 @@ public class FormNhanVien extends javax.swing.JPanel {
 		table.getTableHeader().setPreferredSize(new Dimension(30, 30));
 		((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 
-		nhanVienDao = new NhanVienDao(emf);
-		List<NhanVien> list = nhanVienDao.getAllNhanVien();
+		
+		List<NhanVien> list = allDao.getNhanVienDao().getAllNhanVien();
 		addDataTable(list);
 	}
 
@@ -330,7 +332,12 @@ public class FormNhanVien extends javax.swing.JPanel {
 		btnThem.setPreferredSize(new java.awt.Dimension(105, 55));
 		btnThem.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnThemActionPerformed(evt);
+				try {
+					btnThemActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -342,7 +349,12 @@ public class FormNhanVien extends javax.swing.JPanel {
 		btnCapNhat.setPreferredSize(new java.awt.Dimension(100, 55));
 		btnCapNhat.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnCapNhatActionPerformed(evt);
+				try {
+					btnCapNhatActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -354,7 +366,12 @@ public class FormNhanVien extends javax.swing.JPanel {
 		btnTaoTaiKhoan.setFocusable(false);
 		btnTaoTaiKhoan.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnTaoTaiKhoanActionPerformed(evt);
+				try {
+					btnTaoTaiKhoanActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -365,7 +382,12 @@ public class FormNhanVien extends javax.swing.JPanel {
 		btnExcel.setFocusPainted(false);
 		btnExcel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnExcelActionPerformed(evt);
+				try {
+					btnExcelActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -377,7 +399,12 @@ public class FormNhanVien extends javax.swing.JPanel {
 		btnTim.setPreferredSize(new java.awt.Dimension(105, 55));
 		btnTim.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnTimActionPerformed(evt);
+				try {
+					btnTimActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -463,7 +490,7 @@ public class FormNhanVien extends javax.swing.JPanel {
 
 	}// GEN-LAST:event_tableMouseClicked
 
-	private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnExcelActionPerformed
+	private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnExcelActionPerformed
 		// Mở dialog cho phép người dùng chọn đường dẫn
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel files", "xls", "xlsx");
@@ -476,7 +503,7 @@ public class FormNhanVien extends javax.swing.JPanel {
             String selectedFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 
             // Gọi hàm writeToExcel với đường dẫn đã chọn
-            nhanVienDao.writeToExcel(selectedFilePath+".xls");
+            allDao.getNhanVienDao().writeToExcel(selectedFilePath+".xls");
             JOptionPane.showMessageDialog(btnExcel, "Lưu thành công", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
             System.out.println("File Excel đã được lưu thành công.");
@@ -486,19 +513,19 @@ public class FormNhanVien extends javax.swing.JPanel {
 	}// GEN-LAST:event_btnExcelActionPerformed
 
 //	Tìm Nhân viên bằng CCCD hoặc số điện thoại
-	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTimActionPerformed
+	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnTimActionPerformed
 		String tieuChi = "";
 		if (!jtCCCD.getText().trim().equalsIgnoreCase("")) {
 			tieuChi = jtCCCD.getText();
 			List<NhanVien> list = new ArrayList<NhanVien>();
-			NhanVien nhanVien = nhanVienDao.getNhanVienByCCCD(tieuChi);
+			NhanVien nhanVien =  allDao.getNhanVienDao().getNhanVienByCCCD(tieuChi);
 			list.add(nhanVien);
 			addDataTable(list);
 		}
 		if (!jtSDT.getText().trim().equalsIgnoreCase("")) {
 			tieuChi = jtSDT.getText();
 			List<NhanVien> list = new ArrayList<NhanVien>();
-			NhanVien nhanVien = nhanVienDao.getNhanVienBySDT(tieuChi);
+			NhanVien nhanVien =  allDao.getNhanVienDao().getNhanVienBySDT(tieuChi);
 			list.add(nhanVien);
 			addDataTable(list);
 		} else {
@@ -508,7 +535,7 @@ public class FormNhanVien extends javax.swing.JPanel {
 	}// GEN-LAST:event_btnTimActionPerformed
 
 //	Thêm nhân viên
-	private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnThemActionPerformed
+	private void btnThemActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnThemActionPerformed
 		String CCCD = jtCCCD.getText();
 		String ten = jtTen.getText();
 		if (jDate.getDate() == null) {
@@ -534,28 +561,28 @@ public class FormNhanVien extends javax.swing.JPanel {
 			showMessageValue(check);
 			return;
 		} else {
-			NhanVien nhanVienCccd = nhanVienDao.getNhanVienByCCCD(nhanVien.getCccd());
+			NhanVien nhanVienCccd = allDao.getNhanVienDao().getNhanVienByCCCD(nhanVien.getCccd());
 			if (nhanVienCccd != null) {
 				JOptionPane.showMessageDialog(btnCapNhat, "Căn cước đã tồn tại", "Thông báo",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 
-			List<NhanVien> listMNV = nhanVienDao.getAllNhanVienByMa(
+			List<NhanVien> listMNV =  allDao.getNhanVienDao().getAllNhanVienByMa(
 					"" + nhanVien.getNgayVaoLam().getYear() % 100 + "" + nhanVien.getNgaySinh().getYear() % 100);
 			String maTemp = "NV" + nhanVien.getNgayVaoLam().getYear() % 100 + ""
 					+ nhanVien.getNgayVaoLam().getYear() % 100;
 			String index = (listMNV.size() / 1000 > 0) ? ""+listMNV.size()+1 : (listMNV.size() / 100 > 0) ? ("0" + listMNV.size()+1)
 					: (listMNV.size() / 10 > 0) ? "00" + listMNV.size()+1 : "000" + listMNV.size()+1;
 			nhanVien.setMaNhanVien(maTemp + index);
-			nhanVienDao.addNhanVien(nhanVien);
+			 allDao.getNhanVienDao().addNhanVien(nhanVien);
 			addNhanVienTable(nhanVien);
 			xoaTrang();
 		}
 	}// GEN-LAST:event_btnThemActionPerformed
 
 //	Cập nhật nhân viên
-	private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCapNhatActionPerformed
+	private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnCapNhatActionPerformed
 		String CCCD = jtCCCD.getText();
 		String ten = jtTen.getText();
 		if (jDate.getDate() == null) {
@@ -581,7 +608,7 @@ public class FormNhanVien extends javax.swing.JPanel {
 			showMessageValue(check);
 		} else {
 			nhanVien.setMaNhanVien(jtMaNV.getText());
-			nhanVienDao.updateNhanVien(nhanVien);
+			 allDao.getNhanVienDao().updateNhanVien(nhanVien);
 			updateNhanVienTable(nhanVien);
 			xoaTrang();
 		}
@@ -655,19 +682,19 @@ public class FormNhanVien extends javax.swing.JPanel {
 
 	}// GEN-LAST:event_btnXoaTrangActionPerformed
 
-	private void btnTaoTaiKhoanActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTaoTaiKhoanActionPerformed
+	private void btnTaoTaiKhoanActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnTaoTaiKhoanActionPerformed
 		int index = table.getSelectedRow();
 		if (index < 0)
 			JOptionPane.showMessageDialog(btnTaoTaiKhoan, "Chưa chọn nhân viên cần tạo tài khoản", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
-		NhanVien nhanVien = nhanVienDao.getNhanVienByMa(jtMaNV.getText());
+		NhanVien nhanVien =  allDao.getNhanVienDao().getNhanVienByMa(jtMaNV.getText());
 		if (nhanVien.getTaiKhoan() != null) {
 			JOptionPane.showMessageDialog(btnTaoTaiKhoan, "Nhân viên đã tạo tài khoản", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		
-		mainForm.showForm(new FormTaiKhoan(emf, nhanVien));
+		mainForm.showForm(new FormTaiKhoan(allDao ,nhanVien));
 
 	}// GEN-LAST:event_btnTaoTaiKhoanActionPerformed
 

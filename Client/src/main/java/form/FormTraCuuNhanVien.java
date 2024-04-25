@@ -3,6 +3,7 @@ package form;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +17,13 @@ import javax.swing.table.DefaultTableModel;
 import dao.NhanVienDao;
 import entity.NhanVien;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 public class FormTraCuuNhanVien extends javax.swing.JPanel {
+	private AllDao allDao;
 
-    private EntityManagerFactory emf;
-    private NhanVienDao nhanVienDao;
-
-    public FormTraCuuNhanVien(EntityManagerFactory emf) {
-        this.emf = emf;
+    public FormTraCuuNhanVien(AllDao allDao) throws RemoteException {
+       this.allDao =allDao;
         initComponents();
         formThongTin.setBorder(new EmptyBorder(0, 0, 0, 0));
         formThongTin.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),
@@ -35,8 +35,8 @@ public class FormTraCuuNhanVien extends javax.swing.JPanel {
         table.getTableHeader().setFont(new Font("SansSerif", Font.PLAIN, 14));
         table.getTableHeader().setPreferredSize(new Dimension(30, 30));
         ((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-        nhanVienDao = new NhanVienDao(emf);
-        List<NhanVien> list = nhanVienDao.getAllNhanVien();
+      
+        List<NhanVien> list = allDao.getNhanVienDao().getAllNhanVien();
         addDataTable(list);
     }
 
@@ -137,7 +137,12 @@ public class FormTraCuuNhanVien extends javax.swing.JPanel {
         btnTraCuu.setPreferredSize(new java.awt.Dimension(103, 55));
         btnTraCuu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTraCuuActionPerformed(evt);
+                try {
+					btnTraCuuActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -248,11 +253,11 @@ public class FormTraCuuNhanVien extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnTraCuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTraCuuActionPerformed
+    private void btnTraCuuActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_btnTraCuuActionPerformed
         // TODO add your handling code here:
         String tieuChi = jtMaNV.getText().trim();
         if (!tieuChi.isEmpty()) {
-            NhanVien nhanVien = nhanVienDao.getNhanVienByMa(tieuChi);
+            NhanVien nhanVien = allDao.getNhanVienDao().getNhanVienByMa(tieuChi);
             if (nhanVien != null) {
                 List<NhanVien> list = new ArrayList<>();
                 list.add(nhanVien);

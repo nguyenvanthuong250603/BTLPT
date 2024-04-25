@@ -8,6 +8,8 @@ import form.FormTraCuuKhuyenMai;
 import form.FormTraCuuKhachHang;
 import form.FormTraCuuVe;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
+
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -15,29 +17,47 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+
 import javax.swing.border.EmptyBorder;
 
 public class GD_TraCuuKhuyenMai extends javax.swing.JPanel {
 
-    private EntityManagerFactory emf;
-    public GD_TraCuuKhuyenMai(EntityManagerFactory emf) {
-        initComponents();
+	private AllDao allDao;
+    public GD_TraCuuKhuyenMai(AllDao allDao) throws RemoteException {
+    	this.allDao = allDao;
+    	initComponents();
         setBorder(new EmptyBorder(10, 10, 10, 10));
         
         btnTraCuuKhuyenMai.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mainForm1.showForm(new FormTraCuuKhuyenMai(emf));
+                try {
+					mainForm1.showForm(new FormTraCuuKhuyenMai(allDao));
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
         btnTraCuuNhanVien.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mainForm1.showForm(new FormTraCuuNhanVien(emf));
+                try {
+					mainForm1.showForm(new FormTraCuuNhanVien(allDao));
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
 
-        mainForm1.showForm(new FormTraCuuKhuyenMai(emf));
+        try {
+			mainForm1.showForm(new FormTraCuuKhuyenMai(allDao));
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     }
 
     @Override

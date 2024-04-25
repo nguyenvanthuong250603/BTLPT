@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -34,15 +35,16 @@ import entity.KhachHang;
 import entity.KhuyenMai;
 import entity.Ve;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 public class GD_DoiTra extends javax.swing.JPanel {
 	private HoaDonDao hoaDonDao;
 	private KhachHangDao khachHangDao;
-	private EntityManagerFactory emf;
+	
 	private VeDao veDao;
 	private GaDao gaDao;;
-
-	public GD_DoiTra(EntityManagerFactory emf) {
+	private AllDao allDao;
+	public GD_DoiTra(AllDao allDao) throws RemoteException {
 		initComponents();
 		formHoaDon.setBorder(new EmptyBorder(0, 0, 0, 0));
 		formHoaDon.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),
@@ -63,8 +65,8 @@ public class GD_DoiTra extends javax.swing.JPanel {
 				HEIGHT, new Font(Font.SANS_SERIF, Font.PLAIN, 16) {
 				}, Color.WHITE));
 
-		this.emf = emf;
-		veDao = new VeDao(emf);
+		this.allDao = allDao;
+
 		tableHD.setShowGrid(false);
 		tableHD.setShowHorizontalLines(false);
 		tableHD.setShowVerticalLines(false);
@@ -173,12 +175,18 @@ public class GD_DoiTra extends javax.swing.JPanel {
 			public void mouseClicked(MouseEvent e) {
 				String maHD = tableHD.getValueAt(tableHD.getSelectedRow(), 0).toString();
 
-				HoaDon hd = hoaDonDao.getHoaDonByMa(maHD);
-				hienHoaDon(hd);
-				hienBangVe(maHD, "");
-				if (tableVe.getRowCount() > 0)
-					tableVe.setRowSelectionInterval(0, 0);
-				tableVe.clearSelection();
+				HoaDon hd;
+				try {
+					hd = allDao.getHoaDonDao().getHoaDonByMa(maHD);
+					hienHoaDon(hd);
+					hienBangVe(maHD, "");
+					if (tableVe.getRowCount() > 0)
+						tableVe.setRowSelectionInterval(0, 0);
+					tableVe.clearSelection();
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		javax.swing.GroupLayout formHoaDonLayout = new javax.swing.GroupLayout(formHoaDon);
@@ -241,8 +249,14 @@ public class GD_DoiTra extends javax.swing.JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				String maVe = tableVe.getValueAt(tableVe.getSelectedRow(), 0).toString();
-				Ve ve = veDao.getVeByMa(maVe);
-				hienChiTietVe(ve);
+				Ve ve;
+				try {
+					ve = allDao.getVeDao().getVeByMa(maVe);
+					hienChiTietVe(ve);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		javax.swing.GroupLayout formVeLayout = new javax.swing.GroupLayout(formVe);
@@ -512,7 +526,12 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		btnXoaT.setPreferredSize(new java.awt.Dimension(75, 50));
 		btnXoaT.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnXoaTActionPerformed(evt);
+				try {
+					btnXoaTActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -523,7 +542,12 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		btnTimHD.setMaximumSize(new java.awt.Dimension(75, 60));
 		btnTimHD.setPreferredSize(new java.awt.Dimension(75, 50));
 		btnTimHD.addActionListener(e -> {
-			timHoaDon();
+			try {
+				timHoaDon();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 
 		btnTimV.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
@@ -533,7 +557,12 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		btnTimV.setMaximumSize(new java.awt.Dimension(75, 60));
 		btnTimV.setPreferredSize(new java.awt.Dimension(75, 50));
 		btnTimV.addActionListener(e -> {
-			timVe();
+			try {
+				timVe();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 
 		btnDoi.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
@@ -555,7 +584,12 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		btnTra.setMaximumSize(new java.awt.Dimension(75, 60));
 		btnTra.setPreferredSize(new java.awt.Dimension(75, 50));
 		btnTra.addActionListener(e -> {
-			traVe();
+			try {
+				traVe();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -635,7 +669,7 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		// TODO add your handling code here:
 	}// GEN-LAST:event_jcbSoToaActionPerformed
 
-	private void btnXoaTActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnXoaTActionPerformed
+	private void btnXoaTActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnXoaTActionPerformed
 		jtMHD.setText("");
 		jtMNV.setText("");
 		jtCCCDHD.setText("");
@@ -676,15 +710,13 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		super.paintChildren(g);
 	}
 
-	private void renderHoaDon() {
-		khachHangDao = new KhachHangDao(emf);
-		hoaDonDao = new HoaDonDao(emf);
-		List<HoaDon> lhd = hoaDonDao.getAllHoaDon();
+	private void renderHoaDon() throws RemoteException {
+		List<HoaDon> lhd = allDao.getHoaDonDao().getAllHoaDon();
 		DefaultTableModel model = (DefaultTableModel) tableHD.getModel();
 		model.setRowCount(0);
 
 		for (HoaDon hoaDon : lhd) {
-			KhachHang kh = khachHangDao.getKhachHangByCCCD(hoaDon.getKhachHang().getCccd());
+			KhachHang kh = allDao.getKhachHangDao().getKhachHangByCCCD(hoaDon.getKhachHang().getCccd());
 			List<Ve> listVe = hoaDon.getListVes();
 			double tongTien = 0;
 			for (Ve ve : listVe) {
@@ -713,10 +745,10 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		model.fireTableDataChanged();
 	}
 
-	private void hienHoaDon(HoaDon hd) {
+	private void hienHoaDon(HoaDon hd) throws RemoteException {
 		jtMHD.setText(hd.getMaHoaDon());
 		jtMNV.setText(hd.getNhanVien().getMaNhanVien());
-		KhachHang kh = khachHangDao.getKhachHangByCCCD(hd.getKhachHang().getCccd());
+		KhachHang kh = allDao.getKhachHangDao().getKhachHangByCCCD(hd.getKhachHang().getCccd());
 		jtCCCDHD.setText(kh.getCccd());
 		jtTenKHHD.setText(kh.getHoTen());
 		jtSDT.setText(kh.getSdt());
@@ -739,16 +771,16 @@ public class GD_DoiTra extends javax.swing.JPanel {
 
 	}
 
-	private void timHoaDon() {
+	private void timHoaDon() throws RemoteException {
 		String maHD = jtMHD.getText();
 		if (maHD.equals("")) {
 			JOptionPane.showMessageDialog(null, "Chưa nhập mã hoá đơn", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			HoaDon hoaDon = hoaDonDao.getHoaDonByMa(maHD);
+			HoaDon hoaDon = allDao.getHoaDonDao().getHoaDonByMa(maHD);
 			if (hoaDon != null) {
 				DefaultTableModel model = (DefaultTableModel) tableHD.getModel();
 				model.setRowCount(0);
-				KhachHang kh = khachHangDao.getKhachHangByCCCD(hoaDon.getKhachHang().getCccd());
+				KhachHang kh =allDao.getKhachHangDao().getKhachHangByCCCD(hoaDon.getKhachHang().getCccd());
 				List<Ve> listVe = hoaDon.getListVes();
 				double tongTien = 0;
 				for (Ve ve : listVe) {
@@ -782,12 +814,12 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		}
 	}
 
-	private void hienBangVe(String maHD, String maVe) {
-		List<Ve> listVe = !maHD.equals("") ? veDao.getListVeByMaHD(maHD) : veDao.getListVeByMaVe(maVe);
+	private void hienBangVe(String maHD, String maVe) throws RemoteException {
+		List<Ve> listVe = !maHD.equals("") ? allDao.getVeDao().getListVeByMaHD(maHD) : allDao.getVeDao().getListVeByMaVe(maVe);
 		DefaultTableModel model = (DefaultTableModel) tableVe.getModel();
 		model.setRowCount(0);
 		for (Ve ve : listVe) {
-			KhachHang kh = khachHangDao.getKhachHangByCCCD(ve.getKhachHang().getCccd());
+			KhachHang kh = allDao.getKhachHangDao().getKhachHangByCCCD(ve.getKhachHang().getCccd());
 			Set<ChiTietVe> listChiTietVes = ve.getLisChiTietVes();
 			Ga gaChieuDi = null;
 			Ga gaChieuDen = null;
@@ -808,13 +840,13 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		model.fireTableDataChanged();
 	}
 
-	private void timVe() {
+	private void timVe() throws RemoteException {
 		String maVe = jtMV.getText();
 		if (maVe.equals("")) {
 			JOptionPane.showMessageDialog(null, "Chưa nhập mã vé", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 			jtMV.requestFocus();
 		} else {
-			Ve ve = veDao.getVeByMa(maVe);
+			Ve ve = allDao.getVeDao().getVeByMa(maVe);
 			if (ve != null) {
 				hienBangVe("", maVe);
 				tableVe.setRowSelectionInterval(0, 0);
@@ -825,10 +857,10 @@ public class GD_DoiTra extends javax.swing.JPanel {
 		}
 	}
 
-	private void traVe() {
+	private void traVe() throws RemoteException {
 		if (tableVe.getRowCount() > 0) {
 			String maVe = tableVe.getValueAt(tableVe.getSelectedRow(), 0).toString();
-			Ve ve = veDao.getVeByMa(maVe);
+			Ve ve = allDao.getVeDao().getVeByMa(maVe);
 			LocalDateTime ngayDi = ve.getThoiGianLenTau();
 			LocalDate timeDate = ngayDi.toLocalDate();
 

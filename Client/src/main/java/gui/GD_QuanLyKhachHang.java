@@ -7,6 +7,7 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.File;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import dao.KhachHangDao;
 import entity.KhachHang;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 /**
  *
@@ -33,11 +35,11 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 	/**
 	 * Creates new form GD_QuanLyKhachHang
 	 */
-	private EntityManagerFactory emf;
+	
 	private KhachHangDao khachHangDao;
-
-	public GD_QuanLyKhachHang(EntityManagerFactory emf) {
-		this.emf = emf;
+	private AllDao allDao;
+	public GD_QuanLyKhachHang(AllDao allDao) throws RemoteException {
+		this.allDao = allDao;
 		initComponents();
 
 		jTable1.setShowGrid(false);
@@ -47,8 +49,8 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 		jTable1.getTableHeader().setPreferredSize(new Dimension(30, 30));
 		((DefaultTableCellRenderer) jTable1.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 
-		khachHangDao = new KhachHangDao(emf);
-		List<KhachHang> list = khachHangDao.getAllKhachHang();
+	
+		List<KhachHang> list = allDao.getKhachHangDao().getAllKhachHang();
 		addDataTable(list);
 	}
 
@@ -60,7 +62,7 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()  {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -162,7 +164,12 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
         btnCN.setText("Cập nhật");
         btnCN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCNActionPerformed(evt);
+                try {
+					btnCNActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -170,7 +177,12 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
         btnXuatEX.setText("Xuất Excel");
         btnXuatEX.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnXuatEXActionPerformed(evt);
+                try {
+					btnXuatEXActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -178,7 +190,12 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
         btnXT.setText("Xóa Trắng");
         btnXT.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnXTActionPerformed(evt);
+                try {
+					btnXTActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -186,7 +203,12 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
         btnTim.setText("Tìm");
         btnTim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTimActionPerformed(evt);
+                try {
+					btnTimActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -351,7 +373,7 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 	}
 
 	// Cập nhật KhachHang
-	private void btnCNActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCNActionPerformed
+	private void btnCNActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnCNActionPerformed
 		String CCCD = txtCCCD.getText();
 		String hoTen = txtTen.getText();
 		String email = txtEmail.getText();
@@ -364,7 +386,7 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 		if (check > 0) {
 			showMessageValue(check);
 		} else {
-			khachHangDao.updateKhachHang(khachHang);
+		 allDao.getKhachHangDao().updateKhachHang(khachHang);
 			updateKhachHangTable(khachHang);
 			xoaTrang();
 		}
@@ -372,12 +394,12 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 	}// GEN-LAST:event_btnCNActionPerformed
 
 	// Tìm khách hàng bằng số điện thoại
-	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {
+	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {
 		String tieuChi = "";
 		if (!txtSDT.getText().trim().equalsIgnoreCase("")) {
 			tieuChi = txtSDT.getText();
 			List<KhachHang> list = new ArrayList<KhachHang>();
-			KhachHang khachHang = khachHangDao.getKhachHangByPhoneNumber(tieuChi);
+			KhachHang khachHang = allDao.getKhachHangDao().getKhachHangByPhoneNumber(tieuChi);
 			list.add(khachHang);
 			addDataTable(list);
 		} else if (tieuChi.isEmpty()){
@@ -389,18 +411,18 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 		}
 	}
 	
-	private void xoaTrang() {
+	private void xoaTrang() throws RemoteException {
 		txtCCCD.setText("");
 		txtEmail.setText("");
 		txtSDT.setText("");
 		txtTen.setText("");
 		cbBoxDT.setSelectedIndex(0);
 		jTable1.clearSelection();
-		List<KhachHang> list = khachHangDao.getAllKhachHang();
+		List<KhachHang> list = allDao.getKhachHangDao().getAllKhachHang();
 		addDataTable(list);
 	}
 
-	private void btnXTActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnXTActionPerformed
+	private void btnXTActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnXTActionPerformed
 		xoaTrang();
 	}// GEN-LAST:event_btnXTActionPerformed
 
@@ -415,7 +437,7 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
 		model.fireTableDataChanged();
 	}
 	
-	private void  btnXuatEXActionPerformed(java.awt.event.ActionEvent evt) {
+	private void  btnXuatEXActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {
 		// Mở dialog cho phép người dùng chọn đường dẫn
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel files", "xls", "xlsx");
@@ -428,7 +450,7 @@ public class GD_QuanLyKhachHang extends javax.swing.JPanel {
             String selectedFilePath = fileChooser.getSelectedFile().getAbsolutePath();
 
             // Gọi hàm writeToExcel với đường dẫn đã chọn
-            khachHangDao.writeToExcel(selectedFilePath+".xls");
+            allDao.getKhachHangDao().writeToExcel(selectedFilePath+".xls");
             JOptionPane.showMessageDialog(btnXuatEX, "Lưu thành công", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
             System.out.println("File Excel đã được lưu thành công.");

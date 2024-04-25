@@ -3,6 +3,7 @@ package gui;
 import form.FormNhanVien;
 import form.FormTaiKhoan;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -11,30 +12,43 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+
 import javax.swing.border.EmptyBorder;
 
 
 public class GD_QuanLyNhanVien extends javax.swing.JPanel {
 
-	private EntityManagerFactory emf;
-    public GD_QuanLyNhanVien(EntityManagerFactory emf) {
+	
+    public GD_QuanLyNhanVien(AllDao allDao) throws RemoteException {
         initComponents();
+        
         setBorder(new EmptyBorder(10,10,10,10));
         
         btnNhanVien.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mainForm1.showForm(new FormNhanVien(emf,mainForm1));
+                try {
+					mainForm1.showForm(new FormNhanVien(allDao,mainForm1));
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
         btnTaiKhoan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mainForm1.showForm(new FormTaiKhoan(emf,null));
+                try {
+					mainForm1.showForm(new FormTaiKhoan(allDao,null));
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         });
         
-        mainForm1.showForm(new FormNhanVien(emf,mainForm1));
+        mainForm1.showForm(new FormNhanVien(allDao,mainForm1));
     }
 
 
