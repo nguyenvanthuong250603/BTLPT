@@ -3,6 +3,8 @@ package form;
 import dao.KhachHangDao;
 import entity.KhachHang;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -19,8 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class FormTraCuuKhachHang extends javax.swing.JPanel {
-    private EntityManagerFactory emf;
-    private KhachHangDao khachHangDao;
+    private AllDao allDao;
 
     public FormTraCuuKhachHang(EntityManagerFactory emf) {
         this.emf = emf;

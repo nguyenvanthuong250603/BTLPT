@@ -9,6 +9,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import model.AllDao;
 
+import java.rmi.RemoteException;
+
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
 
@@ -41,7 +43,7 @@ public class Main extends javax.swing.JFrame {
 		main = new MainForm();
 		menu.addEvent(new EventMenuSelected() {
 			@Override
-			public void menuSelected(int menuIndex, int subMenuIndex) {
+			public void menuSelected(int menuIndex, int subMenuIndex) throws RemoteException {
 
 				switch (menuIndex) {
 				case 0:
