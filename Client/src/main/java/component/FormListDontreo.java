@@ -19,20 +19,20 @@ import javax.swing.table.DefaultTableCellRenderer;
 import dao.HoaDonDao;
 import entity.HoaDon;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 import swing.ScrollBar;
 
 
 public class FormListDontreo extends javax.swing.JFrame {
 
 
-	private EntityManagerFactory emf;
+	private AllDao allDao;
 	private HoaDonDao hoaDonDao;
 	private HoaDon hoaDon;
 	private List<HoaDon> list;
-    public FormListDontreo(EntityManagerFactory emf) {
-    	this.emf = emf;
+    public FormListDontreo(AllDao allDao) {
+    	this.allDao = allDao;
     	this.list = new ArrayList<HoaDon>();
-    	this.hoaDonDao = new HoaDonDao(emf);
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Thông tin đơn treo");

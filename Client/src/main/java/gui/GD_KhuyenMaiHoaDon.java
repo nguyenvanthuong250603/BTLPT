@@ -2,6 +2,8 @@
 package gui;
 
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -9,6 +11,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -29,15 +32,14 @@ import entity.KhuyenMai;
 import entity.NhanVien;
 
 public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
-	private EntityManagerFactory emf;
-	private KhuyenMaiDao khuyenMaiDao;
+	private AllDao allDao;
 	private SimpleDateFormat dinhDang = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private SimpleDateFormat dinhDangMa = new SimpleDateFormat("ddMMyyyy");
 	LocalDate localDate = LocalDate.now();
 	Date dateNow = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-	public GD_KhuyenMaiHoaDon(EntityManagerFactory emf) {
-		this.emf = emf;
+	public GD_KhuyenMaiHoaDon(AllDao allDao) throws RemoteException {
+		this.allDao = allDao;
 		initComponents();
 		formText.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),
 				"Thông tin khuyến mãi", 0, HEIGHT, new Font(Font.SANS_SERIF, Font.BOLD, 20) {
@@ -51,8 +53,7 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		table.getTableHeader().setFont(new Font("SansSerif", Font.PLAIN, 16));
 		table.getTableHeader().setPreferredSize(new Dimension(30, 30));
 		((DefaultTableCellRenderer) table.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
-		khuyenMaiDao = new KhuyenMaiDao(emf);
-		List<KhuyenMai> list = khuyenMaiDao.getAllKhuyenMaiHD();
+		List<KhuyenMai> list = allDao.getKhuyenMaiDao().getAllKhuyenMaiHD();
 		addDataTable(list);
 	}
 
@@ -247,7 +248,12 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		btnTamN.setPreferredSize(new java.awt.Dimension(75, 55));
 		btnTamN.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnTamNActionPerformed(evt);
+				try {
+					btnTamNActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -258,7 +264,12 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		btnTim.setPreferredSize(new java.awt.Dimension(75, 55));
 		btnTim.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnTimActionPerformed(evt);
+				try {
+					btnTimActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -280,7 +291,12 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		btnThem.setPreferredSize(new java.awt.Dimension(75, 55));
 		btnThem.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnThemActionPerformed(evt);
+				try {
+					btnThemActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -291,7 +307,12 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		btnCapN.setPreferredSize(new java.awt.Dimension(75, 55));
 		btnCapN.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnCapNActionPerformed(evt);
+				try {
+					btnCapNActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -379,9 +400,9 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		xoaTrang();
 	}// GEN-LAST:event_btnXoaTActionPerformed
 
-	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTimActionPerformed
+	private void btnTimActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnTimActionPerformed
 		String ma = jtMa.getText();
-		KhuyenMai khuyenMai = khuyenMaiDao.getKhuyenMaiByMa(ma);
+		KhuyenMai khuyenMai = allDao.getKhuyenMaiDao().getKhuyenMaiByMa(ma);
 		if (khuyenMai == null) {
 			JOptionPane.showMessageDialog(btnTim, "Không tồn tại khuyến mãi", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -399,7 +420,7 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 
 	}// GEN-LAST:event_btnLocActionPerformed
 
-	private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnThemActionPerformed
+	private void btnThemActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnThemActionPerformed
 		String ten = jtTen.getText().trim();
 		String soL = jtSoL.getText().trim();
 		String chietK = jtChietK.getText().trim();
@@ -412,19 +433,19 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 			return;
 		}
 		String numberMa = "KM" + dinhDangMa.format(timeStart).toString();
-		List<KhuyenMai> list = khuyenMaiDao.getAllKhuyenMaiByNumber(numberMa);
+		List<KhuyenMai> list = allDao.getKhuyenMaiDao().getAllKhuyenMaiByNumber(numberMa);
 
 		String index = (list.size() / 10 > 0) ? "" + (list.size()+1) : "0" + (list.size()+1);
 		khuyenMai.setMaKhuyenMai(numberMa + index);
 		khuyenMai.setSoLuongVe(Integer.parseInt(soL));
 		khuyenMai.setChietKhau(Double.parseDouble(chietK));
 
-		khuyenMaiDao.addKhuyenMai(khuyenMai);
+		allDao.getKhuyenMaiDao().addKhuyenMai(khuyenMai);
 		xoaTrang();
 		addRowTable(khuyenMai);
 	}// GEN-LAST:event_btnThemActionPerformed
 
-	private void btnTamNActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTamNActionPerformed
+	private void btnTamNActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnTamNActionPerformed
 		int index = table.getSelectedRow();
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		if (index < 0) {
@@ -434,20 +455,20 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		String ma = jtMa.getText();
 		if (ma.equalsIgnoreCase(""))
 			ma = model.getValueAt(index, 0).toString();
-		KhuyenMai khuyenMai = khuyenMaiDao.getKhuyenMaiByMa(ma);
+		KhuyenMai khuyenMai = allDao.getKhuyenMaiDao().getKhuyenMaiByMa(ma);
 		boolean trangThai = khuyenMai.isTrangThai();
 		khuyenMai.setTrangThai(!trangThai);
-		khuyenMaiDao.updateKhuyenMai(khuyenMai);
+		allDao.getKhuyenMaiDao().updateKhuyenMai(khuyenMai);
 		xoaTrang();
 		updateDataTable(khuyenMai);
 		JOptionPane.showMessageDialog(btnTim, "Đã thay đổi trạng thái khuyến mãi " + khuyenMai.getMaKhuyenMai(),
 				"Thông báo", JOptionPane.INFORMATION_MESSAGE);
 	}// GEN-LAST:event_btnTamNActionPerformed
 
-	private void btnCapNActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnCapNActionPerformed
+	private void btnCapNActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnCapNActionPerformed
 		String ma = jtMa.getText();
 		Date timeEnd = jDateEnd.getDate();
-		KhuyenMai khuyenMai = khuyenMaiDao.getKhuyenMaiByMa(ma);
+		KhuyenMai khuyenMai = allDao.getKhuyenMaiDao().getKhuyenMaiByMa(ma);
 		int check = checkDataUpdate(khuyenMai, timeEnd);
 		if (check > 0) {
 			showMessageValue(check);
@@ -455,7 +476,7 @@ public class GD_KhuyenMaiHoaDon extends javax.swing.JPanel {
 		}
 		khuyenMai.setThoiGianKetThuc(timeEnd);
 		khuyenMai.setTrangThai(true);
-		khuyenMaiDao.updateKhuyenMai(khuyenMai);
+		allDao.getKhuyenMaiDao().updateKhuyenMai(khuyenMai);
 		updateDataTable(khuyenMai);
 		xoaTrang();
 	}// GEN-LAST:event_btnCapNActionPerformed

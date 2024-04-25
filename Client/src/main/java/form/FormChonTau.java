@@ -48,6 +48,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -77,6 +78,7 @@ import javax.swing.table.TableColumn;
 
 import com.toedter.calendar.JDateChooser;
 
+import model.AllDao;
 import model.Model_InfoVe;
 import model.Model_Tau;
 import swing.ScrollBar;
@@ -102,7 +104,7 @@ public class FormChonTau extends javax.swing.JPanel {
 
 	private Ga gaDau;
 	private Ga gaCuoi;
-	private EntityManagerFactory emf;
+	private AllDao allDao;
 	private EventItemToa eventToa;
 	private EvenItemTau eventTau;
 	private MainForm main;
@@ -113,19 +115,11 @@ public class FormChonTau extends javax.swing.JPanel {
 	private Ga gaDi;
 	private Ga gaDen;
 	private LocalDate ngayDi;
-	private ChiTietVeDao chiTietVeDao;
 	private LocalDate ngayVe;
 	private boolean isMotChieu;
-	private GaDao gaDao;
-	private VeDao veDao;
-	private KhuyenMaiDao kmDao;
-	private HoaDonDao hoaDonDao;
-	private KhachHangDao khachHangDao;
 	private JPopupMenu menu;
 	private PanelSearch search;
 	private List<Ga> listGas;
-	private ToaDao toaDao;
-	private ChoNgoiDao choNgoiDao;
 	private jFrameMuaVe frameMuaVe;
 	private Map<String, Set<ChoNgoi>> listChoChon;
 	private List<Model_InfoVe> listInfoVes;
@@ -137,9 +131,9 @@ public class FormChonTau extends javax.swing.JPanel {
 	private Map<String, Set<String>> liscccd;
 	private TaiKhoan taiKhoan;
 
-	public FormChonTau(EntityManagerFactory emf, MainForm main, List<Chuyen> listChuyens, Ga gaDi, Ga gaDen,
-			LocalDate ngayDi, LocalDate ngayVe, boolean isMotChieu, TaiKhoan taiKhoan) {
-		this.emf = emf;
+	public FormChonTau(AllDao allDao, MainForm main, List<Chuyen> listChuyens, Ga gaDi, Ga gaDen,
+			LocalDate ngayDi, LocalDate ngayVe, boolean isMotChieu, TaiKhoan taiKhoan) throws RemoteException {
+		this.allDao = allDao;
 		this.main = main;
 		this.taiKhoan = taiKhoan;
 		this.listChuyens = listChuyens;
@@ -148,17 +142,9 @@ public class FormChonTau extends javax.swing.JPanel {
 		this.ngayDi = ngayDi;
 		this.ngayVe = ngayVe;
 		this.isMotChieu = isMotChieu;
-		this.chiTietVeDao = new ChiTietVeDao(emf);
-		this.toaDao = new ToaDao(emf);
-		this.gaDao = new GaDao(emf);
-		this.veDao = new VeDao(emf);
-		this.choNgoiDao = new ChoNgoiDao(emf);
-		this.kmDao = new KhuyenMaiDao(emf);
-		this.hoaDonDao = new HoaDonDao(emf);
-		this.khachHangDao = new KhachHangDao(emf);
-		this.listGas = gaDao.getAllGa();
-		this.gaDau = gaDao.layGaDau();
-		this.gaCuoi = gaDao.layGaCuoi();
+		this.listGas = allDao.getGaDao().getAllGa();
+		this.gaDau = allDao.getGaDao().layGaDau();
+		this.gaCuoi = allDao.getGaDao().layGaCuoi();
 		this.listChoChon = new HashMap<String, Set<ChoNgoi>>();
 		this.liscccd = new HashMap<String, Set<String>>();
 		this.listInfoVes = new ArrayList<Model_InfoVe>();
@@ -174,7 +160,12 @@ public class FormChonTau extends javax.swing.JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				cbDTAction(e);
+				try {
+					cbDTAction(e);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -220,17 +211,22 @@ public class FormChonTau extends javax.swing.JPanel {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// TODO Auto-generated method stub
-				txtCccdReload(e);
+				try {
+					txtCccdReload(e);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 	}
 
 //    Du lieu toa
-	private void AddDataToa(Model_Tau chuyen) {
+	private void AddDataToa(Model_Tau chuyen) throws RemoteException {
 		listIconTau.removeAll();
 		setEventToa(new EventItemToa() {
 			@Override
-			public void itemClick(Component com, Toa toa) {
+			public void itemClick(Component com, Toa toa) throws RemoteException {
 				setSelectedToa(com, toa, chuyen);
 			}
 
@@ -238,16 +234,16 @@ public class FormChonTau extends javax.swing.JPanel {
 		IconToa dau = new IconToa();
 		dau.setData(new ImageIcon(getClass().getResource("/icon/trainHead.png")), chuyen.getMaTau());
 		listIconTau.add(dau);
-		List<Toa> listToas = toaDao.getAllToaByMaChuyen(chuyen.getMaTau());
+		List<Toa> listToas = allDao.getToaDao().getAllToaByMaChuyen(chuyen.getMaTau());
 		for (Toa toa : listToas) {
 			addItemToa(toa);
 		}
 		Component com = listIconTau.getComponent(listToas.get(0).getViTri());
 		setSelectedToa(com, listToas.get(0), chuyen);
 	}
-	private void txtCccdReload(KeyEvent e) {
+	private void txtCccdReload(KeyEvent e) throws RemoteException {
 		String cc = jtCccd.getText();
-		KhachHang kh = khachHangDao.getKhachHangByCCCD(cc);
+		KhachHang kh = allDao.getKhachHangDao().getKhachHangByCCCD(cc);
 		if(kh != null) {
 			jtHoT.setText(kh.getHoTen());
 			jtSdt.setText(kh.getSdt());
@@ -267,7 +263,12 @@ public class FormChonTau extends javax.swing.JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (SwingUtilities.isLeftMouseButton(e)) {
-					eventToa.itemClick(icontoa, toa);
+					try {
+						eventToa.itemClick(icontoa, toa);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 
@@ -277,7 +278,7 @@ public class FormChonTau extends javax.swing.JPanel {
 		listIconTau.revalidate();
 	}
 
-	public void setSelectedToa(Component item, Toa toa, Model_Tau chuyen) {
+	public void setSelectedToa(Component item, Toa toa, Model_Tau chuyen) throws RemoteException {
 		if (((IconToa) item).isSeleted())
 			return;
 		for (Component com : listIconTau.getComponents()) {
@@ -290,18 +291,18 @@ public class FormChonTau extends javax.swing.JPanel {
 		int index = toa.getViTri();
 
 		if (index < 5) {
-			List<ChoNgoi> lisNgois = choNgoiDao.getAllChoNgoiTrongVTToa(gaDi.getId(), gaDen.getId(),
+			List<ChoNgoi> lisNgois = allDao.getChoNgoiDao().getAllChoNgoiTrongVTToa(gaDi.getId(), gaDen.getId(),
 					chuyen.getChuyen().getMaChuyen(), index, true);
 			spListKhoang.setViewportView(formGhe = new FormToaGhe(chuyen, lisNgois, listChoChon, model, listInfoVes));
 			lbifToa.setText("Toa " + index + ": Ngồi mền điều hòa");
 		} else if (index < 8) {
-			List<ChoNgoi> lisNgois = choNgoiDao.getAllChoNgoiTrongVTToa(gaDi.getId(), gaDen.getId(),
+			List<ChoNgoi> lisNgois = allDao.getChoNgoiDao().getAllChoNgoiTrongVTToa(gaDi.getId(), gaDen.getId(),
 					chuyen.getChuyen().getMaChuyen(), index, true);
 			spListKhoang
 					.setViewportView(formNam = new FormToaNam(6, chuyen, lisNgois, listChoChon, model, listInfoVes));
 			lbifToa.setText("Toa " + index + ": Giường nằm khoang 6 điều hòa");
 		} else {
-			List<ChoNgoi> lisNgois = choNgoiDao.getAllChoNgoiTrongVTToa(gaDi.getId(), gaDen.getId(),
+			List<ChoNgoi> lisNgois = allDao.getChoNgoiDao().getAllChoNgoiTrongVTToa(gaDi.getId(), gaDen.getId(),
 					chuyen.getChuyen().getMaChuyen(), index, true);
 			spListKhoang
 					.setViewportView(formNam = new FormToaNam(4, chuyen, lisNgois, listChoChon, model, listInfoVes));
@@ -310,12 +311,17 @@ public class FormChonTau extends javax.swing.JPanel {
 	}
 
 //    Du lieu tau
-	private void AddDataTau() {
+	private void AddDataTau() throws RemoteException {
 		setEvent(new EvenItemTau() {
 			@Override
-			public void itemClick(Component com, Model_Tau item) {
-				if (setSelectedTau(com))
-					AddDataToa(item);
+			public void itemClick(Component com, Model_Tau item) throws RemoteException {
+				try {
+					if (setSelectedTau(com))
+						AddDataToa(item);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 		});
@@ -338,7 +344,12 @@ public class FormChonTau extends javax.swing.JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (SwingUtilities.isLeftMouseButton(e)) {
-					eventTau.itemClick(item, data);
+					try {
+						eventTau.itemClick(item, data);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 
@@ -618,7 +629,12 @@ public class FormChonTau extends javax.swing.JPanel {
 		btnTimChuyen.setPreferredSize(new java.awt.Dimension(75, 55));
 		btnTimChuyen.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				btnTimChuyenActionPerformed(evt);
+				try {
+					btnTimChuyenActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -778,7 +794,12 @@ public class FormChonTau extends javax.swing.JPanel {
 		btnXacNhan.setPreferredSize(new java.awt.Dimension(66, 55));
 		btnXacNhan.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				btnXacNhanMouseClicked(evt);
+				try {
+					btnXacNhanMouseClicked(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -841,7 +862,12 @@ public class FormChonTau extends javax.swing.JPanel {
 		jrDi.setText("Chiều đi");
 		jrDi.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(java.awt.event.MouseEvent evt) {
-				jrDiMouseClicked(evt);
+				try {
+					jrDiMouseClicked(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -850,7 +876,12 @@ public class FormChonTau extends javax.swing.JPanel {
 		jrVe.setText("Chiều về");
 		jrVe.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jrVeActionPerformed(evt);
+				try {
+					jrVeActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 
@@ -940,7 +971,7 @@ public class FormChonTau extends javax.swing.JPanel {
 						.addContainerGap()));
 	}// </editor-fold>//GEN-END:initComponents
 
-	private void cbDTAction(ActionEvent e) {
+	private void cbDTAction(ActionEvent e) throws RemoteException {
 		int index = tbListVe.getSelectedRow();
 		if (index < 0)
 			return;
@@ -966,7 +997,13 @@ public class FormChonTau extends javax.swing.JPanel {
 					if ("date".equals(evt.getPropertyName())) {
 						Date dateChon = dateChooser.getDate();
 						String key = sdf.format(dateChon);
-						List<KhachHang> listccTam = khachHangDao.layKhachHangThuocMa(key);
+						List<KhachHang> listccTam = null;
+						try {
+							listccTam = allDao.getKhachHangDao().layKhachHangThuocMa(key);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						int c = 0;
 						if (liscccd.containsKey(key))
 							c = liscccd.get(key).size();
@@ -1001,7 +1038,7 @@ public class FormChonTau extends javax.swing.JPanel {
 //    		List<KhachHang> khachHangs = khachHangDao.layKhachHangThuocMa(doiTuong);
 
 		}
-		KhuyenMai km = kmDao.layKhuyenMaiTotNhatBangLoai(doiTuong);
+		KhuyenMai km = allDao.getKhuyenMaiDao().layKhuyenMaiTotNhatBangLoai(doiTuong);
 		if (km != null) {
 			Model_InfoVe veif = listInfoVes.get(index);
 			model.setValueAt(
@@ -1021,11 +1058,11 @@ public class FormChonTau extends javax.swing.JPanel {
 		dateVe.setEnabled(false);
 	}// GEN-LAST:event_rdMotChieuActionPerformed
 
-	private void btnTimChuyenActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnTimChuyenActionPerformed
+	private void btnTimChuyenActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {// GEN-FIRST:event_btnTimChuyenActionPerformed
 		String gaDi = jtGaDi.getText();
 		String gaDen = jtGaDen.getText();
-		Ga ga1 = gaDao.getGaByTen(gaDi);
-		Ga ga2 = gaDao.getGaByTen(gaDen);
+		Ga ga1 = allDao.getGaDao().getGaByTen(gaDi);
+		Ga ga2 = allDao.getGaDao().getGaByTen(gaDen);
 		if (ga1 == null) {
 			JOptionPane.showMessageDialog(null, "Ga không tồn tại", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 			return;
@@ -1043,7 +1080,7 @@ public class FormChonTau extends javax.swing.JPanel {
 			return;
 		}
 
-		List<String> listTuyens = new TuyenDao(emf).layTuyenChuaGa(ga1.getId(), ga2.getId());
+		List<String> listTuyens = allDao.getTuyenDao().layTuyenChuaGa(ga1.getId(), ga2.getId());
 		if (listTuyens.size() == 0) {
 			JOptionPane.showMessageDialog(null, "Không có tàu đi tuyến của bạn", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -1062,7 +1099,7 @@ public class FormChonTau extends javax.swing.JPanel {
 		}
 		List<Chuyen> listChuyenDis = new ArrayList<Chuyen>();
 		for (String maTuyen : listTuyens) {
-			List<Chuyen> listtam = new ChuyenDao(emf).getAllChuyenByNgay(ngDi, ga1.getId() < ga2.getId(), maTuyen);
+			List<Chuyen> listtam = allDao.getChuyenDao().getAllChuyenByNgay(ngDi, ga1.getId() < ga2.getId(), maTuyen);
 			listChuyenDis.addAll(listtam);
 		}
 		if (listChuyenDis.size() == 0) {
@@ -1073,7 +1110,7 @@ public class FormChonTau extends javax.swing.JPanel {
 		List<Chuyen> listChuyenVes = new ArrayList<Chuyen>();
 		if (ngVe != null) {
 			for (String maTuyen : listTuyens) {
-				List<Chuyen> listtam = new ChuyenDao(emf).getAllChuyenByNgay(ngVe, ga1.getId() > ga2.getId(), maTuyen);
+				List<Chuyen> listtam = allDao.getChuyenDao().getAllChuyenByNgay(ngVe, ga1.getId() > ga2.getId(), maTuyen);
 				listChuyenVes.addAll(listtam);
 			}
 			if (listChuyenVes.size() == 0) {
@@ -1103,7 +1140,7 @@ public class FormChonTau extends javax.swing.JPanel {
 			if(formDonTreo == null) {
 				java.awt.EventQueue.invokeLater(new Runnable() {
 					public void run() {
-						formDonTreo = new FormListDontreo( emf);
+						formDonTreo = new FormListDontreo(allDao);
 						formDonTreo.setVisible(true);
 					}
 				});
@@ -1185,7 +1222,7 @@ public class FormChonTau extends javax.swing.JPanel {
 		}
 	}// GEN-LAST:event_jtGaDiKeyReleased
 
-	private void btnXacNhanMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_btnXacNhanMouseClicked
+	private void btnXacNhanMouseClicked(java.awt.event.MouseEvent evt) throws RemoteException {// GEN-FIRST:event_btnXacNhanMouseClicked
 		if(frameMuaVe == null || !frameMuaVe.isVisible()) {
 			if (listInfoVes.size() == 0) {
 				JOptionPane.showMessageDialog(null, "Bạn chưa chọn chổ ngồi", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -1211,13 +1248,13 @@ public class FormChonTau extends javax.swing.JPanel {
 			String maHD = "HD" + currentDateTime.format(formatterHD);
 			HoaDon hd = new HoaDon(maHD, LocalTime.now(), LocalDate.now(), true);
 			hd.setKhachHang(kh);
-			KhuyenMai km = kmDao.layKhuyenMaiTotNhatBangLoai(listInfoVes.size());
+			KhuyenMai km = allDao.getKhuyenMaiDao().layKhuyenMaiTotNhatBangLoai(listInfoVes.size());
 			Set<KhuyenMai> listKM = null;
 			if(km != null) {
 				listKM = new HashSet<KhuyenMai>();
 				listKM.add(km);
 			}
-			km = kmDao.layKhuyenMaiTotNhatBangLoai("Vé");
+			km = allDao.getKhuyenMaiDao().layKhuyenMaiTotNhatBangLoai("Vé");
 			if(km != null) {
 				if(listKM != null)
 					listKM.add(km);
@@ -1229,13 +1266,13 @@ public class FormChonTau extends javax.swing.JPanel {
 			
 			hd.setLisKhuyenMais(listKM);
 			hd.setNhanVien(taiKhoan.getNhanVien());
-			List<Ve> listVeMa = veDao.layVeThuocMa(currentDateTime.format(formatterVe));
+			List<Ve> listVeMa = allDao.getVeDao().layVeThuocMa(currentDateTime.format(formatterVe));
 			List<Ve> listVe = new ArrayList<Ve>();
 			for (int i = 0; i < model.getRowCount(); i++) {
 				cccd = model.getValueAt(i, 0).toString();
 				hoTen = model.getValueAt(i, 1).toString();
 				doiTuong = model.getValueAt(i, 2).toString();
-				kh = khachHangDao.getKhachHangByCCCD(cccd);
+				kh = allDao.getKhachHangDao().getKhachHangByCCCD(cccd);
 				if(kh == null)
 					kh = new KhachHang(cccd, hoTen, doiTuong);
 				if (checkDataVe(kh) > 0) {
@@ -1247,7 +1284,7 @@ public class FormChonTau extends javax.swing.JPanel {
 						: ((listVeMa.size() + i) / 10 > 0) ? "0" + (listVeMa.size() + i) : "00" + (listVeMa.size() + i);
 				mave = currentDateTime.format(formatterVe) + dem + "Aplus";
 				Ve ve = new Ve(mave, listInfoVes.get(i).getChuyen().getDateLenTau(), true);
-				km = kmDao.layKhuyenMaiTotNhatBangLoai(doiTuong);
+				km = allDao.getKhuyenMaiDao().layKhuyenMaiTotNhatBangLoai(doiTuong);
 				
 				Set<ChiTietVe> listCTV = new HashSet<ChiTietVe>();
 				listCTV.add(new ChiTietVe(ve,listInfoVes.get(i).getChuyen().getGaDi(), true));
@@ -1264,7 +1301,7 @@ public class FormChonTau extends javax.swing.JPanel {
 			}
 			hd.setListVes(listVe);
 			if(frameMuaVe == null) {
-				frameMuaVe = new jFrameMuaVe(emf,hd);
+				frameMuaVe = new jFrameMuaVe(allDao,hd);
 				frameMuaVe.addWindowListener(new WindowAdapter() {
 					@Override
 					public void windowDeactivated(WindowEvent e) {
@@ -1276,7 +1313,11 @@ public class FormChonTau extends javax.swing.JPanel {
 							DefaultTableModel md = (DefaultTableModel) tbListVe.getModel();
 							md.setRowCount(0);
 							listTau.removeAll();
-							AddDataTau();
+							try {
+								AddDataTau();
+							} catch (RemoteException e1) {
+								e1.printStackTrace();
+							}
 							
 						}
 						
@@ -1373,15 +1414,15 @@ public class FormChonTau extends javax.swing.JPanel {
 		lbMoTaVe.setText(" ");
 	}// GEN-LAST:event_btnHuyChoMouseClicked
 
-	private void jrDiMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jrDiMouseClicked
+	private void jrDiMouseClicked(java.awt.event.MouseEvent evt) throws RemoteException {// GEN-FIRST:event_jrDiMouseClicked
 		if (isJrDi)
 			return;
 		isJrVe = !isJrVe;
 		isJrDi = !isJrDi;
-		List<String> listTuyens = new TuyenDao(emf).layTuyenChuaGa(gaDi.getId(), gaDen.getId());
+		List<String> listTuyens = allDao.getTuyenDao().layTuyenChuaGa(gaDi.getId(), gaDen.getId());
 		List<Chuyen> listChuyenVes = new ArrayList<Chuyen>();
 		for (String maTuyen : listTuyens) {
-			List<Chuyen> listtam = new ChuyenDao(emf).getAllChuyenByNgay(ngayDi, gaDi.getId() > gaDen.getId(), maTuyen);
+			List<Chuyen> listtam = allDao.getChuyenDao().getAllChuyenByNgay(ngayDi, gaDi.getId() > gaDen.getId(), maTuyen);
 			listChuyenVes.addAll(listtam);
 		}
 		listTau.removeAll();
@@ -1394,15 +1435,15 @@ public class FormChonTau extends javax.swing.JPanel {
 		updateDataChuyen();
 	}// GEN-LAST:event_jrDiMouseClicked
 
-	private void jrVeActionPerformed(java.awt.event.ActionEvent evt) {
+	private void jrVeActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {
 		if (isJrVe)
 			return;
 		isJrVe = !isJrVe;
 		isJrDi = !isJrDi;
-		List<String> listTuyens = new TuyenDao(emf).layTuyenChuaGa(gaDi.getId(), gaDen.getId());
+		List<String> listTuyens = allDao.getTuyenDao().layTuyenChuaGa(gaDi.getId(), gaDen.getId());
 		List<Chuyen> listChuyenVes = new ArrayList<Chuyen>();
 		for (String maTuyen : listTuyens) {
-			List<Chuyen> listtam = new ChuyenDao(emf).getAllChuyenByNgay(ngayVe, gaDi.getId() > gaDen.getId(), maTuyen);
+			List<Chuyen> listtam = allDao.getChuyenDao().getAllChuyenByNgay(ngayVe, gaDi.getId() > gaDen.getId(), maTuyen);
 			listChuyenVes.addAll(listtam);
 		}
 		listTau.removeAll();

@@ -10,7 +10,10 @@ import entity.Ga;
 import entity.TaiKhoan;
 import event.EvenItemGaClick;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
+
 import java.awt.Color;
+import java.rmi.RemoteException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -21,18 +24,16 @@ import javax.swing.JPopupMenu;
 
 public class FormMuaVe extends javax.swing.JPanel {
 
-    private EntityManagerFactory emf;
+    private AllDao allDao;
     private MainForm main;
-    private GaDao gaDao;
     private JPopupMenu menu;
     private PanelSearch search;
     private List<Ga> listGas;
     private TaiKhoan taiKhoan;
 
-    public FormMuaVe(MainForm main, EntityManagerFactory emf, TaiKhoan taiKhoan) {
-        this.emf = emf;
-        gaDao = new GaDao(emf);
-        this.listGas = gaDao.getAllGa();
+    public FormMuaVe(MainForm main, AllDao allDao, TaiKhoan taiKhoan) throws RemoteException {
+        this.allDao = allDao;
+        this.listGas = allDao.getGaDao().getAllGa();
         this.taiKhoan = taiKhoan;
         initComponents();
         this.main = main;
@@ -139,7 +140,12 @@ public class FormMuaVe extends javax.swing.JPanel {
         btnTimChuyen.setText("Tìm kiếm");
         btnTimChuyen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTimChuyenActionPerformed(evt);
+                try {
+					btnTimChuyenActionPerformed(evt);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -281,11 +287,11 @@ public class FormMuaVe extends javax.swing.JPanel {
 
     }//GEN-LAST:event_ngayDiFocusGained
 
-    private void btnTimChuyenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimChuyenActionPerformed
+    private void btnTimChuyenActionPerformed(java.awt.event.ActionEvent evt) throws RemoteException {//GEN-FIRST:event_btnTimChuyenActionPerformed
         String gaDi = txtGaDi.getText();
         String gaDen = txtGaDen.getText();
-        Ga ga1 = gaDao.getGaByTen(gaDi);
-        Ga ga2 = gaDao.getGaByTen(gaDen);
+        Ga ga1 = allDao.getGaDao().getGaByTen(gaDi);
+        Ga ga2 = allDao.getGaDao().getGaByTen(gaDen);
         if(ga1 == null) {
         	JOptionPane.showMessageDialog(null, "Ga không tồn tại", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         	return;
@@ -305,7 +311,7 @@ public class FormMuaVe extends javax.swing.JPanel {
 			return;
 		}
         
-        List<String> listTuyens = new TuyenDao(emf).layTuyenChuaGa(ga1.getId(), ga2.getId());
+        List<String> listTuyens = allDao.getTuyenDao().layTuyenChuaGa(ga1.getId(), ga2.getId());
         if(listTuyens.size() == 0) {
         	JOptionPane.showMessageDialog(null, "Không có tàu đi tuyến của bạn", "Thông báo",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -324,7 +330,7 @@ public class FormMuaVe extends javax.swing.JPanel {
         }
         List<Chuyen> listChuyenDis = new ArrayList<Chuyen>();
         for(String maTuyen:listTuyens) {
-        	List<Chuyen> listtam = new ChuyenDao(emf).getAllChuyenByNgay(ngDi, ga1.getId() < ga2.getId(),maTuyen); 	
+        	List<Chuyen> listtam = allDao.getChuyenDao().getAllChuyenByNgay(ngDi, ga1.getId() < ga2.getId(),maTuyen); 	
         	listChuyenDis.addAll(listtam);
         }
         if(listChuyenDis.size() == 0) {
@@ -335,7 +341,7 @@ public class FormMuaVe extends javax.swing.JPanel {
         List<Chuyen> listChuyenVes = new ArrayList<Chuyen>();
         if(ngVe != null) {
         	for(String maTuyen:listTuyens) {
-            	List<Chuyen> listtam = new ChuyenDao(emf).getAllChuyenByNgay(ngVe, ga1.getId() > ga2.getId(),maTuyen); 	
+            	List<Chuyen> listtam = allDao.getChuyenDao().getAllChuyenByNgay(ngVe, ga1.getId() > ga2.getId(),maTuyen); 	
             	listChuyenVes.addAll(listtam);
             }
         	if(listChuyenVes.size() == 0) {
@@ -345,7 +351,7 @@ public class FormMuaVe extends javax.swing.JPanel {
             }
         }
         
-        main.showForm(new FormChonTau(emf,main,listChuyenDis,ga1,ga2,ngDi,ngVe,radBtnMotChieu.isSelected(),taiKhoan));
+        main.showForm(new FormChonTau(allDao,main,listChuyenDis,ga1,ga2,ngDi,ngVe,radBtnMotChieu.isSelected(),taiKhoan));
     }//GEN-LAST:event_btnTimChuyenActionPerformed
 
     private void radBtnMotChieuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radBtnMotChieuActionPerformed

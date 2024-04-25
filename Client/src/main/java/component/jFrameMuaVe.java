@@ -19,24 +19,17 @@ import entity.HoaDon;
 import entity.KhuyenMai;
 import entity.Ve;
 import jakarta.persistence.EntityManagerFactory;
+import model.AllDao;
 
 public class jFrameMuaVe extends javax.swing.JFrame {
 
 	private HoaDon hoadon;
-	private HoaDonDao hoaDonDao;
-	private KhachHangDao khachHangDao;
-	private VeDao veDao;
-	private ChiTietVeDao chiTietVeDao;
-	private EntityManagerFactory emf;
+	private AllDao allDao;
 	private boolean isAddHoaDon;
 	
-    public jFrameMuaVe(EntityManagerFactory emf, HoaDon hd) {
+    public jFrameMuaVe(AllDao allDao, HoaDon hd) {
     	this.hoadon = hd;
-    	this.emf = emf;
-    	this.khachHangDao = new KhachHangDao(emf);
-    	this.veDao = new VeDao(emf);
-    	this.chiTietVeDao = new ChiTietVeDao(emf);
-    	this.hoaDonDao = new HoaDonDao(emf);
+    	this.allDao = allDao;
     	this.isAddHoaDon = false;
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -295,18 +288,18 @@ public class jFrameMuaVe extends javax.swing.JFrame {
     	try {
     		double tienNhap = Double.parseDouble(tien);
     		double tongTien = Double.parseDouble(ifTongT.getText().substring(0, ifTongT.getText().length()-4));
-    		if(tienNhap - tongTien >= 0) {
-    			if(khachHangDao.getKhachHangByCCCD(hoadon.getKhachHang().getCccd()) == null)
-    				khachHangDao.addKhachHang(hoadon.getKhachHang());
-    			hoaDonDao.addHoaDon(hoadon);
+    		if(tienNhap - tongTien*0.3 >= 0) {
+    			if(allDao.getKhachHangDao().getKhachHangByCCCD(hoadon.getKhachHang().getCccd()) == null)
+    				allDao.getKhachHangDao().addKhachHang(hoadon.getKhachHang());
+    			allDao.getHoaDonDao().addHoaDon(hoadon);
     			for(Ve v: hoadon.getListVes()) {
-    				if(khachHangDao.getKhachHangByCCCD(v.getKhachHang().getCccd()) == null)
-    					khachHangDao.addKhachHang(v.getKhachHang());
+    				if(allDao.getKhachHangDao().getKhachHangByCCCD(v.getKhachHang().getCccd()) == null)
+    					allDao.getKhachHangDao().addKhachHang(v.getKhachHang());
     				else
-    					khachHangDao.updateKhachHang(v.getKhachHang());
-    				veDao.addVe(v);
+    					allDao.getKhachHangDao().updateKhachHang(v.getKhachHang());
+    				allDao.getVeDao().addVe(v);
     				for(ChiTietVe ctv : v.getLisChiTietVes()) {
-    					chiTietVeDao.addChiTietVe(ctv);
+    					allDao.getChiTietVeDao().addChiTietVe(ctv);
     				}
     			}
     			this.isAddHoaDon = true;
@@ -329,17 +322,17 @@ public class jFrameMuaVe extends javax.swing.JFrame {
     		double tienNhap = Double.parseDouble(tien);
     		double tongTien = Double.parseDouble(ifTongT.getText().substring(0, ifTongT.getText().length()-4));
     		if(tienNhap - tongTien >= 0) {
-    			if(khachHangDao.getKhachHangByCCCD(hoadon.getKhachHang().getCccd()) == null)
-    				khachHangDao.addKhachHang(hoadon.getKhachHang());
-    			hoaDonDao.addHoaDon(hoadon);
+    			if(allDao.getKhachHangDao().getKhachHangByCCCD(hoadon.getKhachHang().getCccd()) == null)
+    				allDao.getKhachHangDao().addKhachHang(hoadon.getKhachHang());
+    			allDao.getHoaDonDao().addHoaDon(hoadon);
     			for(Ve v: hoadon.getListVes()) {
-    				if(khachHangDao.getKhachHangByCCCD(v.getKhachHang().getCccd()) == null)
-    					khachHangDao.addKhachHang(v.getKhachHang());
+    				if(allDao.getKhachHangDao().getKhachHangByCCCD(v.getKhachHang().getCccd()) == null)
+    					allDao.getKhachHangDao().addKhachHang(v.getKhachHang());
     				else
-    					khachHangDao.updateKhachHang(v.getKhachHang());
-    				veDao.addVe(v);
+    					allDao.getKhachHangDao().updateKhachHang(v.getKhachHang());
+    				allDao.getVeDao().addVe(v);
     				for(ChiTietVe ctv : v.getLisChiTietVes()) {
-    					chiTietVeDao.addChiTietVe(ctv);
+    					allDao.getChiTietVeDao().addChiTietVe(ctv);
     				}
     			}
     			this.isAddHoaDon = true;

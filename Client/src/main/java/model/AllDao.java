@@ -10,6 +10,7 @@ import dao.KhuyenMaiDao;
 import dao.NhanVienDao;
 import dao.TaiKhoanDao;
 import dao.TauDao;
+import dao.ToaDao;
 import dao.TuyenDao;
 import dao.VeDao;
 
@@ -26,14 +27,18 @@ public class AllDao {
 	private TauDao tauDao;
 	private TuyenDao tuyenDao;
 	private VeDao veDao;
+	private ToaDao toaDao;
 
 	public AllDao() {
 
 	}
 
+	
+
 	public AllDao(ChiTietVeDao chiTietVeDao, ChoNgoiDao choNgoiDao, ChuyenDao chuyenDao, GaDao gaDao,
 			HoaDonDao hoaDonDao, KhachHangDao khachHangDao, KhuyenMaiDao khuyenMaiDao, NhanVienDao nhanVienDao,
-			TaiKhoanDao taiKhoanDao, TauDao tauDao, TuyenDao tuyenDao, VeDao veDao) {
+			TaiKhoanDao taiKhoanDao, TauDao tauDao, TuyenDao tuyenDao, VeDao veDao, ToaDao toaDao) {
+		super();
 		this.chiTietVeDao = chiTietVeDao;
 		this.choNgoiDao = choNgoiDao;
 		this.chuyenDao = chuyenDao;
@@ -46,7 +51,10 @@ public class AllDao {
 		this.tauDao = tauDao;
 		this.tuyenDao = tuyenDao;
 		this.veDao = veDao;
+		this.toaDao = toaDao;
 	}
+
+
 
 	public ChiTietVeDao getChiTietVeDao() {
 		return chiTietVeDao;
@@ -144,4 +152,15 @@ public class AllDao {
 		this.veDao = veDao;
 	}
 
+
+
+	public ToaDao getToaDao() {
+		return toaDao;
+	}
+
+	public void setToaDao(ToaDao toaDao) {
+		this.toaDao = toaDao;
+	}
+
+	
 }
