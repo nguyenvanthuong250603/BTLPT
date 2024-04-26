@@ -169,8 +169,12 @@ public class GD_DoiTra extends javax.swing.JPanel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				int index = tableHD.getSelectedRow();
+				if(index<0) 
+					return;
+				
 				String maHD = tableHD.getValueAt(tableHD.getSelectedRow(), 0).toString();
-
+				
 				HoaDon hd;
 				try {
 					hd = allDao.getHoaDonDao().getHoaDonByMa(maHD);

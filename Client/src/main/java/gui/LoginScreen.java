@@ -25,7 +25,7 @@ import model.AllDao;
 
 public class LoginScreen extends javax.swing.JFrame {
 
-	private static final String URL = "rmi://DESKTOP-APQ3LQK:7401/";
+	private static final String URL = "rmi://192.168.79.83:7401/";
 	private TaiKhoan taiKhoan;
 	private AllDao allDao;
 
