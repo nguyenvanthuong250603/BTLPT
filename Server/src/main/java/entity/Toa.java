@@ -7,6 +7,7 @@ package entity;
 import java.util.Set;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.io.Serializable;
@@ -25,7 +26,7 @@ public class Toa implements Serializable {
 	@Column(name = "ViTri")
 	private int viTri;
 	
-	@OneToMany(mappedBy = "toa")
+	@OneToMany(mappedBy = "toa",fetch = FetchType.EAGER)
 	private Set<ChoNgoi> lisChoNgois;
 
 	

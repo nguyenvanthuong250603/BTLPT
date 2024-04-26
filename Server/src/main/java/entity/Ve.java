@@ -40,15 +40,15 @@ public class Ve implements Serializable {
     @Column(name = "TrangThai")
     private boolean trangThai;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaChuyen")
     private Chuyen chuyen;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaChoNgoi")
     private ChoNgoi choNgoi;
 
-    @OneToMany(mappedBy = "ve")
+    @OneToMany(mappedBy = "ve",fetch = FetchType.EAGER)
     private Set<ChiTietVe> lisChiTietVes;
 
     @ManyToOne
@@ -59,7 +59,7 @@ public class Ve implements Serializable {
     @JoinColumn(name = "CCCD")
     private KhachHang khachHang;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaHoaDon")
     private HoaDon hoaDon;
 

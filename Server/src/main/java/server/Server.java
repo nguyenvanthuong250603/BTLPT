@@ -35,7 +35,7 @@ import dao.ipml.TuyenDaoIpml;
 import dao.ipml.VeDaoIpml;
 
 public class Server {
-	private static final String URL = "rmi://LAPTOP-Q87SHKQC:7401/";
+	private static final String URL = "rmi://DESKTOP-APQ3LQK:7401/";
 	public static void main(String[] args) {
 		try {
 			Context context = new InitialContext();

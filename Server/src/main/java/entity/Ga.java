@@ -33,7 +33,7 @@ public class Ga implements Serializable {
     private String diaChi;
 
 
-    @OneToMany(mappedBy = "ga")
+    @OneToMany(mappedBy = "ga",fetch = FetchType.EAGER)
     private Set<ChiTietVe> lisChiTietVes;
 
     public Ga() {

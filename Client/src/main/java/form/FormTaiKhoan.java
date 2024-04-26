@@ -26,7 +26,7 @@ public class FormTaiKhoan extends javax.swing.JPanel {
 	private NhanVien nhanVien;
 	private AllDao allDao;
 	public FormTaiKhoan(AllDao allDao, NhanVien nhanVien) throws RemoteException {
-		
+		this.allDao = allDao;
 		this.nhanVien = nhanVien;
 		initComponents();
 		fNhap.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.WHITE),

@@ -38,11 +38,7 @@ import jakarta.persistence.EntityManagerFactory;
 import model.AllDao;
 
 public class GD_DoiTra extends javax.swing.JPanel {
-	private HoaDonDao hoaDonDao;
-	private KhachHangDao khachHangDao;
 	
-	private VeDao veDao;
-	private GaDao gaDao;;
 	private AllDao allDao;
 	public GD_DoiTra(AllDao allDao) throws RemoteException {
 		initComponents();
@@ -858,7 +854,13 @@ public class GD_DoiTra extends javax.swing.JPanel {
 	}
 
 	private void traVe() throws RemoteException {
+		
 		if (tableVe.getRowCount() > 0) {
+			int index = tableVe.getSelectedRow();
+			if(index < 0) {
+				JOptionPane.showMessageDialog(null, "Chưa chọn vé", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
 			String maVe = tableVe.getValueAt(tableVe.getSelectedRow(), 0).toString();
 			Ve ve = allDao.getVeDao().getVeByMa(maVe);
 			LocalDateTime ngayDi = ve.getThoiGianLenTau();
@@ -884,7 +886,13 @@ public class GD_DoiTra extends javax.swing.JPanel {
 //					chi dc tra 70%
 					double soTienDuocTra = ve.getChoNgoi().getGia() * Math.abs(gaChieuDen.getId() - gaChieuDi.getId())*0.7
 							* (ve.getKhuyenMai() == null ? 1 : ve.getKhuyenMai().getChietKhau());
-					veDao.updateDoiVe(maVe, LocalDateTime.now());
+					
+					
+					allDao.getVeDao().updateDoiVe(maVe, LocalDateTime.now());
+					DefaultTableModel modeltbv =(DefaultTableModel) tableVe.getModel();
+					modeltbv.removeRow(index);
+					modeltbv.fireTableDataChanged();
+					JOptionPane.showMessageDialog(null, "Trả vé thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
 				} else {
 					JOptionPane.showMessageDialog(null, "Vé không thể đổi trả do sắp đến giờ khởi hành", "Thông báo",

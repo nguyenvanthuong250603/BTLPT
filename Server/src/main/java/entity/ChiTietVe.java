@@ -12,12 +12,12 @@ import java.io.Serializable;
 public class ChiTietVe implements Serializable {
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaVe")
     private Ve ve;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID")
     private Ga ga;
 

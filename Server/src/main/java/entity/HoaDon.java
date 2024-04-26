@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 @Entity
 @NamedQueries({
-	@org.hibernate.annotations.NamedQuery(name = "HoaDon.findAll",query = "select hd from HoaDon hd")
+	@org.hibernate.annotations.NamedQuery(name = "HoaDon.findAll",query = "select hd from HoaDon hd WHERE hd.trangThai = true")
 })
 public class HoaDon implements Serializable {
 
@@ -52,10 +52,10 @@ public class HoaDon implements Serializable {
     @JoinColumn(name = "CCCD")
     private KhachHang khachHang;
 
-    @OneToMany(mappedBy = "hoaDon")
+    @OneToMany(mappedBy = "hoaDon",fetch = FetchType.EAGER)
     private List<Ve> listVes;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ChiTietKhuyenMai", joinColumns = {
         @JoinColumn(name = "MaHoaDon")}, inverseJoinColumns = {
         @JoinColumn(name = "MaKhuyenMai")})

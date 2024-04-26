@@ -9,6 +9,7 @@ import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
@@ -30,7 +31,7 @@ public class Tuyen implements Serializable {
 	@OneToMany(mappedBy = "tuyen")
 	private List<Chuyen> listChuyens;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "ChiTietTuyen", joinColumns = { 
 			@JoinColumn(name = "MaTuyen") }, inverseJoinColumns = {
 			@JoinColumn(name = "ID") })

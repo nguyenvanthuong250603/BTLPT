@@ -31,11 +31,11 @@ public class ChoNgoi implements Serializable {
     @Column(name = "ViTri")
     private int viTri;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaTau")
     private Tau tau;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MaToa")
     private Toa toa;
 
